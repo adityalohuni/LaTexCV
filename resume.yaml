@@ -1,0 +1,65 @@
+# Fill in your resume details below
+name:
+  first: John
+  last: Doe
+contact:
+  email: johndoe@email.com
+  portfolio: https://johndoe.com
+  github: https://github.com/johndoe
+  linkedin: https://linkedin.com/in/johndoe
+education:
+  - institution: Example University
+    degree: BSc Computer Science
+    location: 2020 - 2024 | USA
+    description: Focus on AI and Cloud
+  - institution: Example College
+    degree: High School Diploma
+    location: 2016 - 2020 | USA
+    description: Graduated with honors
+skills:
+  - Python
+  - C++
+  - Machine Learning
+  - Cloud Computing
+# Add more sections as needed
+
+experience:
+  - company: Example Corp
+    position: Software Engineer
+    location: 2024 - Present | Remote
+    description: Worked on scalable backend systems and cloud infrastructure.
+  - company: Another Inc
+    position: Intern
+    location: Summer 2023 | USA
+    description: Assisted in frontend development and QA.
+
+projects:
+  - name: SmartCV
+    url: https://github.com/johndoe/smartcv
+    description: Automated resume builder using Python and LaTeX.
+  - name: ML Toolkit
+    url: https://github.com/johndoe/mltoolkit
+    description: Machine learning utilities for data scientists.
+
+awards:
+  - title: Best Student Award
+    year: 2022
+    description: Awarded for academic excellence at Example University.
+  - title: Hackathon Winner
+    year: 2023
+    description: Won first place in XYZ Hackathon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
