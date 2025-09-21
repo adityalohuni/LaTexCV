@@ -37,12 +37,12 @@ jobs:
       - name: List artifacts
         run: ls -l dist
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: latexcv-linux-wheel
           path: dist/*.whl
       - name: Upload Linux executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: latexcv-linux
           path: dist/latexcv
@@ -67,7 +67,7 @@ jobs:
         run: pyinstaller --onefile src/latexcv/main.py --name latexcv
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: latexcv-windows
           path: dist/latexcv.exe
@@ -92,7 +92,7 @@ jobs:
         run: pyinstaller --onefile src/latexcv/main.py --name latexcv
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: latexcv-macos
           path: dist/latexcv
