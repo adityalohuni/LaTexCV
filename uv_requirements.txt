@@ -1,2 +1,0 @@
-# uv requirements for cross-platform Python dependency management
--r requirements.txt

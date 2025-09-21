@@ -1,0 +1,20 @@
+[project]
+name = "latexcv"
+version = "0.1.0"
+authors = [
+    { name = "Aditya Lohuni", email = "adityalohuni@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pdf2image>=1.17.0",
+    "pillow>=11.3.0",
+    "pylatex>=1.4.2",
+    "pyyaml>=6.0.2",
+]
+
+[project.scripts]
+latexcv = "latexcv.main:main"
+
+[build-system]
+requires = ["uv_build>=0.8.13,<0.9.0"]
+build-backend = "uv_build"

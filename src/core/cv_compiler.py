@@ -31,7 +31,6 @@ class CVCompiler:
         # Step 3: Ensure .cls file exists in build dir before compiling
         # NOTE: Ensure your .cls files use fonts compatible with pdflatex (not xelatex-only fonts)
         try:
-            # from src.core.generator.generic import generate_resume_pylatex
 
             # Define the directory where your files are
             build_dir = 'build'
@@ -41,7 +40,7 @@ class CVCompiler:
             
             # Change to the build directory
             
-            from src.core.generator import ResumeGenerator
+            from core.generator import ResumeGenerator
             generator = ResumeGenerator(yaml_path='resume.yaml', cls_file=cls_file)
 
             os.chdir(build_dir)

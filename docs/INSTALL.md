@@ -40,12 +40,12 @@ brew install --cask mactex
 
 ## Install Python Dependencies
 ```sh
-uv pip install -r requirements.txt
+uv pip install -r pyproject.toml
 ```
 
 ## Run the GUI Editor
 ```sh
-uv run python3 gui_resume.py
+uv run python3 -m latexcv
 ```
 
 ## Build the PDF Resume

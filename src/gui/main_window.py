@@ -10,8 +10,8 @@ try:
 except ImportError:
     convert_from_path = None
 
-from src.core.yaml_handler import YAMLHandler
-from src.core.cv_compiler import CVCompiler
+from core.yaml_handler import YAMLHandler
+from core.cv_compiler import CVCompiler
 
 RESUME_YAML = 'resume.yaml'
 BUILD_DIR = 'build'
