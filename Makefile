@@ -1,7 +1,7 @@
 # Build cross-platform binary using PyInstaller
 binary: check
-	$(PYTHON) pip install pyinstaller
-	$(PYTHON) -m PyInstaller --onefile --windowed --name cvgen gui_resume.py
+	$(PYTHON) -m pip install pyinstaller
+	$(PYTHON) -m PyInstaller --onefile --windowed --name cvgen src/main/main.py
 	@echo "Binary built in dist/cvgen. Supports CLI and GUI."
 # Cross-platform Makefile for building the resume
 
@@ -11,7 +11,7 @@ RESUME_TEX=resume.tex
 BUILD_DIR=build
 LATEX=xelatex
 PYTHON=uv
-CLS_DIR=cls
+CLS_DIR=src/cls
 CLS_TEMPLATE?=$(CLS_DIR)/deedy-resume.cls
 
 

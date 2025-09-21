@@ -2,11 +2,11 @@ import sys
 import argparse
 
 def run_gui():
-    from gui.main_window import MainWindow
+    from src.gui.main_window import MainWindow
     MainWindow().mainloop()
 
 def run_cli():
-    from core.cv_compiler import CVCompiler
+    from src.core.cv_compiler import CVCompiler
     import os
     parser = argparse.ArgumentParser(description='CV Generator CLI')
     parser.add_argument('--yaml', default='resume.yaml', help='YAML input file')
@@ -19,7 +19,7 @@ def run_cli():
     sys.exit(0 if success else 1)
 
 if __name__ == '__main__':
-    if '--cli' in sys.argv:
+    if len(sys.argv)>1:
         run_cli()
     else:
         run_gui()

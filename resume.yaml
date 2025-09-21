@@ -1,65 +1,92 @@
-# Fill in your resume details below
 name:
   first: John
   last: Doe
+
 contact:
-  email: johndoe@email.com
-  portfolio: https://johndoe.com
+  email: john.doe@example.com
+  portfolio: https://johndoe.github.io
   github: https://github.com/johndoe
-  linkedin: https://linkedin.com/in/johndoe
+  linkedin: https://www.linkedin.com/in/johndoe/
+
 education:
-  - institution: Example University
-    degree: BSc Computer Science
-    location: 2020 - 2024 | USA
-    description: Focus on AI and Cloud
-  - institution: Example College
-    degree: High School Diploma
-    location: 2016 - 2020 | USA
-    description: Graduated with honors
+  - left: true
+    institution: John Doe University
+    degree: Computer Science
+    location: City, Country
+    dates: 2024 - Present
+    description: "Focus on AI and Cloud"
+  - left: true
+    institution: Another University
+    degree: BSc Software Engineering
+    location: City, Country
+    dates: 2021 - 2024
+    description: "Discontinued"
+
 skills:
-  - Python
-  - C++
-  - Machine Learning
-  - Cloud Computing
-# Add more sections as needed
+  - left: true
+    title: Languages
+    description: "C++14/17 • Python • Rust • Go • C# (.NET)"
+  - left: true
+    title: Web & Mobile
+    description: "JavaScript • TypeScript • React • React Native • Next.js • Flutter"
+  - left: true
+    title: AI/ML
+    description: "PyTorch • NLP • Computer Vision"
+  - left: true
+    title: Core Competencies
+    description: "Full-Stack Development • Data Scraping • REST APIs • System Design"
+
+certifications:
+  - left: true
+  - title: Big Data and Hadoop
+    issuer: Generic Tech Issuer
+    dates: 2025
+  - title: Redis for AI
+    issuer: Generic Tech Issuer
+    dates: 2025
+  - title: GenAI Apps with MongoDB
+    issuer: Generic Tech Issuer
+    dates: 2025
+  - title: Model Context Protocol
+    issuer: Generic Tech Issuer
+    dates: 2025
+
+interests:
+  - left: true
+  - AI Research
+  - Robotics
+  - Autonomous Systems
+  - Trail Hiking
+  - Open Source
+
+summary:
+  - description: "Passionate software engineer specializing in applied AI and full-stack development. Hands-on experience with large language models (LLMs), NLP, and practical software engineering. Strong foundation in computer science with a focus on building scalable solutions across AI, robotics, and full-stack systems."
 
 experience:
-  - company: Example Corp
-    position: Software Engineer
-    location: 2024 - Present | Remote
-    description: Worked on scalable backend systems and cloud infrastructure.
-  - company: Another Inc
+  - company: Freelance Software Developer
+    position: Software Developer
+    location: Remote
+    dates: "July 2024 - October 2024"
+    description: |
+      - Delivered custom software solutions for small businesses, designing and implementing full-stack web and mobile applications to automate workflows.
+      - Collaborated directly with clients to understand requirements and rapidly prototype solutions.
+  - company: John Doe Corp
     position: Intern
-    location: Summer 2023 | USA
-    description: Assisted in frontend development and QA.
+    location: Remote
+    dates: "January 2024 - March 2024"
+    description: |
+      - Developed LLM-powered chatbots and created robust NLP data processing pipelines.
+      - Collected and preprocessed Hinglish (code-mixed) datasets for various NLP tasks.
 
-projects:
-  - name: SmartCV
-    url: https://github.com/johndoe/smartcv
-    description: Automated resume builder using Python and LaTeX.
-  - name: ML Toolkit
-    url: https://github.com/johndoe/mltoolkit
-    description: Machine learning utilities for data scientists.
-
-awards:
-  - title: Best Student Award
-    year: 2022
-    description: Awarded for academic excellence at Example University.
-  - title: Hackathon Winner
-    year: 2023
-    description: Won first place in XYZ Hackathon.
-
-
-
-
-
-
-
-
-
-
-
-
+open_source_contributions:
+  - project: John Doe Project (Wayland Compositor)
+    contribution: "Contributed improvements to enhance the Wayland compositor functionality."
+    pull_request: '#XXXX'
+    url: https://github.com/johndoe/project1/pull/XXXX
+  - project: John Doe Project (Development Tools)
+    contribution: "Contributed improvements to React Native CLI tools, enhancing developer experience."
+    pull_request: '#YYYY'
+    url: https://github.com/johndoe/project2/pull/YYYY
 
 
 
