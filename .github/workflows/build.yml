@@ -6,7 +6,7 @@ on:
       - 'v*'       # runs on version tags like v0.1.0
   pull_request:
     branches:
-      - main       # optional: run on PRs to main
+      - master       # optional: run on PRs to main
 jobs:
   build:
     runs-on: ubuntu-latest
