@@ -35,14 +35,15 @@
    ```
 
 4. **Build your PDF resume**
-   - Recommended (Makefile):
+   - Recommended (uv):
    ```sh
-   make
+   uv run python3 -m latexcv.main --yaml resume.yaml --tex resume.tex --cls cls/deedy.cls
    ```
 
 5. **Build a cross-platform binary (CLI/GUI)**
    ```sh
-   make binary
+   uv pip install pyinstaller
+   pyinstaller src/latexcv/main.py --onefile --name latexcv
    ```
    - Output: `dist/latexcv` (Linux/macOS) or `dist/latexcv.exe` (Windows)
 
@@ -57,8 +58,9 @@
    ```
 
 7. **Clean build artifacts**
+   Remove build artifacts manually:
    ```sh
-   make clean
+   rm -rf build dist *.spec
    ```
 
 ---
@@ -92,7 +94,7 @@ See [`docs/INSTALL.md`](docs/INSTALL.md) for full instructions on installing XeT
 - `cls/` — LaTeX class templates
 - `src/` — Source code
 - `build/` — Build artifacts
-- `Makefile` — Build and automation
+   - `Makefile` — (legacy, now replaced by uv/pyinstaller)
 - `docs/` — Documentation
 
 ---

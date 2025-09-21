@@ -51,26 +51,28 @@ uv run python3 -m latexcv
 ## Build the PDF Resume
 Recommended:
 ```sh
-make
+uv run python3 -m latexcv.main --yaml resume.yaml --tex resume.tex --cls cls/deedy.cls
 ```
 
 ## Build a cross-platform binary (CLI/GUI)
 ```sh
-make binary
+uv pip install pyinstaller
+pyinstaller src/latexcv/main.py --onefile --name latexcv
 ```
-The binary will be in `dist/cvgen` (Linux/macOS) or `dist/cvgen.exe` (Windows).
+The binary will be in `dist/latexcv` (Linux/macOS) or `dist/latexcv.exe` (Windows).
 
 ## Run the binary
 GUI mode (default):
 ```sh
-./dist/cvgen
+./dist/latexcv
 ```
 CLI mode:
 ```sh
-./dist/cvgen --cli --yaml resume.yaml --tex resume.tex --cls deedy-resume.cls
+./dist/latexcv --yaml resume.yaml --tex resume.tex --cls cls/deedy.cls
 ```
 
 ## Clean Build Artifacts
+Remove build artifacts manually:
 ```sh
-make clean
+rm -rf build dist *.spec
 ```
