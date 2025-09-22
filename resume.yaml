@@ -88,11 +88,14 @@ open_source_contributions:
     pull_request: '#YYYY'
     url: https://github.com/johndoe/project2/pull/YYYY
 
+projects:
+  - project: HackerNews Website
+    description: "Developed a modern web interface for HackerNews, focusing on enhanced readability, real-time updates, and community-driven features. Integrated RESTful APIs and implemented responsive design for seamless experience across devices."
+    url: https://www.hackernews.com
+    url_href: project
 
-
-
-
-
-
-
+  - project: VisionBot
+    description: "Built an AI-powered computer vision tool for real-time object detection and tracking. Utilized PyTorch and OpenCV to process live video streams, with a user-friendly dashboard for monitoring and analytics."
+    url: https://github.com/johndoe/visionbot
+    url_href: github
 

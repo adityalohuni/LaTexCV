@@ -3,6 +3,8 @@ import re
 from pathlib import Path
 from pylatex import Document, Section, MiniPage, Command, Enumerate
 from pylatex.utils import NoEscape
+from pylatex.basic import NewLine
+
 
 class ResumeGenerator:
     """
@@ -126,11 +128,13 @@ class ResumeGenerator:
         if secondary_title:
 
             if(primary_title):
-                target.append(NoEscape(r'\newline'))
+                target.append(NewLine())
+
             target.append(Command('descript', self._process_text_for_latex(secondary_title)))
 
         if(not secondary_title):
-            target.append(NoEscape(r'\newline'))
+            target.append(NewLine())
+
         # --- 3. Extract and Format Metadata Line ---
         meta_parts = []
         for key, prefix in meta_keys.items():
@@ -145,6 +149,8 @@ class ResumeGenerator:
         if meta_parts:
             target.append(Command('location', NoEscape(" ~|~ ".join(meta_parts))))
 
+
+
         # --- 4. Process Main Content (potentially recursive) ---
         for key in content_keys:
             if key in item:
@@ -158,8 +164,9 @@ class ResumeGenerator:
                 target.append(NoEscape(r"\\" if any(k in item for k in content_keys) else "")) # Add space if content exists
                 target.append(NoEscape(r"\textbf{" + label + r":} " + self._process_text_for_latex(values)))
         
+        
         if not is_nested:
-            target.append(NoEscape(r'\newline'))
+            target.append(NewLine())
 
     def _add_section(self, title: str, items: list, parent):
         """Adds a section, processing each item based on its attributes."""
@@ -206,6 +213,10 @@ class ResumeGenerator:
         with self.doc.create(MiniPage(width=r'0.33\textwidth', pos='t')) as left:
             for title, items in left_sections:
                 self._add_section(title, items, parent=left)
+
+        # self.doc.append(NoEscape('%'))
+        self.doc.append(NoEscape(r'\hfill'))
+
 
         with self.doc.create(MiniPage(width=r'0.66\textwidth', pos='t', align='t')) as right:
             for title, items in right_sections:
