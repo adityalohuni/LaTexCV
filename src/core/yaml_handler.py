@@ -15,3 +15,9 @@ class YAMLHandler:
         yaml.safe_load(content)  # Validate YAML
         with open(self.yaml_path, 'w') as f:
             f.write(content)
+
+    def load_dict(self):
+        if Path(self.yaml_path).exists():
+            with open(self.yaml_path, 'r') as f:
+                return yaml.safe_load(f)
+        return {}

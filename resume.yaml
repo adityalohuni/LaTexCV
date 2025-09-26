@@ -1,101 +1,51 @@
+contact:
+  email: john.doe@example.com
+  github: https://github.com/johndoe
+  linkedin: https://www.linkedin.com/in/johndoe/
+  portfolio: https://johndoe.github.io
+education:
+- dates: 2024 - Present
+  degree: Computer Science
+  description: Focus on AI and Cloud
+  institution: John Doe University
+  left: true
+  location: City, Country
+- dates: 2021 - 2024
+  degree: BSc Software Engineering
+  description: Discontinued
+  institution: Another University
+  left: true
+  location: City, Country
+interests:
+- left: true
+- AI Research
+- Robotics
+- Autonomous Systems
+- Trail Hiking
+- Open Source
 name:
   first: John
   last: Doe
-
-contact:
-  email: john.doe@example.com
-  portfolio: https://johndoe.github.io
-  github: https://github.com/johndoe
-  linkedin: https://www.linkedin.com/in/johndoe/
-
-education:
-  - left: true
-    institution: John Doe University
-    degree: Computer Science
-    location: City, Country
-    dates: 2024 - Present
-    description: "Focus on AI and Cloud"
-  - left: true
-    institution: Another University
-    degree: BSc Software Engineering
-    location: City, Country
-    dates: 2021 - 2024
-    description: "Discontinued"
-
 skills:
-  - left: true
-    title: Languages
-    description: "C++14/17 • Python • Rust • Go • C# (.NET)"
-  - left: true
-    title: Web & Mobile
-    description: "JavaScript • TypeScript • React • React Native • Next.js • Flutter"
-  - left: true
-    title: AI/ML
-    description: "PyTorch • NLP • Computer Vision"
-  - left: true
-    title: Core Competencies
-    description: "Full-Stack Development • Data Scraping • REST APIs • System Design"
-
-certifications:
-  - left: true
-  - title: Big Data and Hadoop
-    issuer: Generic Tech Issuer
-    dates: 2025
-  - title: Redis for AI
-    issuer: Generic Tech Issuer
-    dates: 2025
-  - title: GenAI Apps with MongoDB
-    issuer: Generic Tech Issuer
-    dates: 2025
-  - title: Model Context Protocol
-    issuer: Generic Tech Issuer
-    dates: 2025
-
-interests:
-  - left: true
-  - AI Research
-  - Robotics
-  - Autonomous Systems
-  - Trail Hiking
-  - Open Source
-
+- description: "C++14/17 \u2022 Python \u2022 Rust \u2022 Go \u2022 C# (.NET)"
+  left: true
+  title: Languages
+- description: "JavaScript \u2022 TypeScript \u2022 React \u2022 React Native \u2022\
+    \ Next.js \u2022 Flutter"
+  left: true
+  title: Web & Mobile
+- description: "PyTorch \u2022 NLP \u2022 Computer Vision"
+  left: true
+  title: AI/ML
+- description: "Full-Stack Development \u2022 Data Scraping \u2022 REST APIs \u2022\
+    \ System Design"
+  left: true
+  title: Core Competencies
+- description: Running Jumping
+  left: true
+  title: Sports
 summary:
-  - description: "Passionate software engineer specializing in applied AI and full-stack development. Hands-on experience with large language models (LLMs), NLP, and practical software engineering. Strong foundation in computer science with a focus on building scalable solutions across AI, robotics, and full-stack systems."
-
-experience:
-  - company: Freelance Software Developer
-    position: Software Developer
-    location: Remote
-    dates: "July 2024 - October 2024"
-    description: |
-      - Delivered custom software solutions for small businesses, designing and implementing full-stack web and mobile applications to automate workflows.
-      - Collaborated directly with clients to understand requirements and rapidly prototype solutions.
-  - company: John Doe Corp
-    position: Intern
-    location: Remote
-    dates: "January 2024 - March 2024"
-    description: |
-      - Developed LLM-powered chatbots and created robust NLP data processing pipelines.
-      - Collected and preprocessed Hinglish (code-mixed) datasets for various NLP tasks.
-
-open_source_contributions:
-  - project: John Doe Project (Wayland Compositor)
-    contribution: "Contributed improvements to enhance the Wayland compositor functionality."
-    pull_request: '#XXXX'
-    url: https://github.com/johndoe/project1/pull/XXXX
-  - project: John Doe Project (Development Tools)
-    contribution: "Contributed improvements to React Native CLI tools, enhancing developer experience."
-    pull_request: '#YYYY'
-    url: https://github.com/johndoe/project2/pull/YYYY
-
-projects:
-  - project: HackerNews Website
-    description: "Developed a modern web interface for HackerNews, focusing on enhanced readability, real-time updates, and community-driven features. Integrated RESTful APIs and implemented responsive design for seamless experience across devices."
-    url: https://www.hackernews.com
-    url_href: project
-
-  - project: VisionBot
-    description: "Built an AI-powered computer vision tool for real-time object detection and tracking. Utilized PyTorch and OpenCV to process live video streams, with a user-friendly dashboard for monitoring and analytics."
-    url: https://github.com/johndoe/visionbot
-    url_href: github
-
+- description: Passionate software engineer specializing in applied AI and full-stack
+    development. Hands-on experience with large language models (LLMs), NLP, and practical
+    software engineering. Strong foundation in computer science with a focus on building
+    scalable solutions across AI, robotics, and full-stack systems.
