@@ -19,6 +19,14 @@ class ResumeModel:
         with open(self.yaml_file, 'w') as f:
             yaml.dump(self.data, f)
 
+    def save_raw(self, raw_content: str):
+        """Write raw YAML content (string) directly to the yaml file.
+
+        This is used by SectionManager to preserve commented-out blocks.
+        """
+        with open(self.yaml_file, 'w') as f:
+            f.write(raw_content)
+
     def get_data(self):
         # return a copy without internal _order key for UI convenience
         if isinstance(self.data, dict) and '_order' in self.data:

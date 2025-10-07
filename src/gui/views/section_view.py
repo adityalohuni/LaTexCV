@@ -5,18 +5,27 @@ from tkfontawesome import icon_to_image
 
 
 class SectionView:
-    def __init__(self, parent, section_name, visible=True, drag_callback=None, move_up_callback=None, move_down_callback=None):
+    def __init__(self, parent, section_name, visible=True, drag_callback=None,
+                 move_up_callback=None, move_down_callback=None,
+                 remove_callback=None, visibility_callback=None):
         self.parent = parent
         self.section_name = section_name
         self.visible = visible
         self.frame = None
         self.eye_button = None
         self.items = []
+
         # Optional callbacks provided by the container (MainWindow)
         # drag_callback(action, section_name, event) where action is 'start','motion','end'
         self.drag_callback = drag_callback
         self.move_up_callback = move_up_callback
         self.move_down_callback = move_down_callback
+        # Optional callback to request the container remove this section.
+        # Signature assumption: remove_callback(section_name) -> False to cancel, otherwise proceed.
+        self.remove_callback = remove_callback
+        # Optional callback to notify container/manager of visibility change
+        self.visibility_callback = visibility_callback
+
         self.create_frame()
 
     def create_frame(self):
@@ -48,15 +57,24 @@ class SectionView:
 
         # Optional move up/down buttons for accessibility (keyboard users)
         if self.move_up_callback:
-            up_btn = ttk.Button(self.header_frame, text='↑', width=3, command=lambda: self.move_up_callback(self.section_name), bootstyle=(LINK, "secondary"))
-            up_btn.pack(side='right', padx=(4,0))
+            up_btn = ttk.Button(self.header_frame, text='↑', width=3,
+                                command=lambda: self.move_up_callback(self.section_name),
+                                bootstyle=(LINK, "secondary"))
+            up_btn.pack(side='right', padx=(4, 0))
         if self.move_down_callback:
-            down_btn = ttk.Button(self.header_frame, text='↓', width=3, command=lambda: self.move_down_callback(self.section_name), bootstyle=(LINK, "secondary"))
+            down_btn = ttk.Button(self.header_frame, text='↓', width=3,
+                                  command=lambda: self.move_down_callback(self.section_name),
+                                  bootstyle=(LINK, "secondary"))
             down_btn.pack(side='right')
+
+        # Remove section button (danger style)
+        remove_btn = ttk.Button(self.header_frame, text='Remove', width=8,
+                                command=self.remove_section, bootstyle=DANGER)
+        remove_btn.pack(side='right', padx=(4, 0))
 
         # Small visibility toggle: show a compact eye glyph and change bootstyle
         # to a gray style when hidden. Visibility is not stored in YAML; hiding
-        # simply prevents the section data from being included on save.
+        # simply mutes the section in the UI; the manager will comment it out.
         eye_text = '👁'
         eye_boot = 'info' if self.visible else 'secondary'
         # small width so it doesn't dominate header
@@ -67,7 +85,7 @@ class SectionView:
             command=self.toggle_visibility,
             bootstyle=eye_boot,
         )
-        self.eye_button.pack(side='right', padx=(6,0))
+        self.eye_button.pack(side='right', padx=(6, 0))
 
         # Ensure initial enabled/disabled state matches self.visible
         try:
@@ -114,6 +132,20 @@ class SectionView:
         # Do not remove the frame from layout; only enable/disable its widgets
         try:
             self.set_enabled(self.visible)
+        except Exception:
+            pass
+        # Notify container/manager so YAML can be updated (comment/uncomment)
+        try:
+            if self.visibility_callback:
+                # visibility_callback is expected to be a no-arg callable
+                try:
+                    self.visibility_callback()
+                except TypeError:
+                    # fallback: try passing section_name
+                    try:
+                        self.visibility_callback(self.section_name)
+                    except Exception:
+                        pass
         except Exception:
             pass
         # Update eye button appearance
@@ -163,3 +195,30 @@ class SectionView:
     def remove_item(self, frame, item_dict):
         frame.destroy()
         self.items.remove(item_dict)
+
+    def remove_section(self):
+        """Request removal of this entire section.
+
+        If a container-provided callback exists, call it with the section name.
+        If the callback returns False, cancel the removal. Otherwise destroy the
+        section frame locally.
+        """
+        try:
+            if self.remove_callback:
+                try:
+                    res = self.remove_callback(self.section_name)
+                except TypeError:
+                    # Fallback if callback expects different signature
+                    res = self.remove_callback(self)
+                # If callback explicitly returned False, do not remove locally
+                if res is False:
+                    return
+        except Exception:
+            # Ignore errors from callback and continue to remove locally
+            pass
+
+        try:
+            if self.frame:
+                self.frame.destroy()
+        except Exception:
+            pass
