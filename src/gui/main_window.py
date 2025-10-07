@@ -1,6 +1,7 @@
 """Main window for the CV generator GUI application."""
 
 import os
+import tkinter as tk
 import tkinter.simpledialog as simpledialog
 from pathlib import Path
 
@@ -23,13 +24,14 @@ from ttkbootstrap.scrolled import ScrolledFrame
 from controllers.resume_controller import ResumeController
 from gui.fonts import FONTS
 from models.resume_model import ResumeModel
-from views.contact_section import ContactSection
-from views.education_section import EducationSection
-from views.interests_section import InterestsSection
-from views.item_section import ItemSection
-from views.name_section import NameSection
-from views.skills_section import SkillsSection
-from views.summary_section import SummarySection
+from gui.views.contact_section import ContactSection
+from gui.views.education_section import EducationSection
+from gui.views.interests_section import InterestsSection
+from gui.views.item_section import ItemSection
+from gui.views.name_section import NameSection
+from gui.views.skills_section import SkillsSection
+from gui.views.summary_section import SummarySection
+from gui.views.experience_section import ExperienceSection
 
 RESUME_YAML = "resume.yaml"
 BUILD_DIR = "build"
@@ -45,14 +47,19 @@ class MainWindow(ttk.Window):
         self.title("CV Generator")
         self.geometry("1400x800")  # Increased size for better proportions
         self.resizable(True, True)
+        # model + controller
         self.model = ResumeModel(RESUME_YAML)
         self.controller = ResumeController(self.model, BUILD_DIR, PDF_PATH)
+        # assets
         self.cls_files = self.get_cls_files()
         self.dynamic_sections = []
-        self.section_names = ['name', 'contact', 'summary', 'education', 'skills', 'interests']
+        # include default sections in order
+        self.section_names = ['name', 'contact', 'summary', 'experience', 'education', 'skills', 'interests']
         self.all_section_names = self.section_names[:]
+        # UI state
         self.current_section = 0
         self.sections = {}
+        # build UI
         self.create_widgets()
         self.create_sections()
         self.show_current_section()
@@ -133,25 +140,11 @@ class MainWindow(ttk.Window):
             editor_frame, text="Sections", font=("Helvetica", 16, "bold")
         )
         sections_label.grid(row=1, column=0, sticky="w", pady=(0, 10))
-
-        self.scrolled_frame = ScrolledFrame(editor_frame, autohide=True)
+        # Keep scrollbar visible so users can scroll through all sections on one page
+        self.scrolled_frame = ScrolledFrame(editor_frame, autohide=False)
         self.scrolled_frame.grid(row=2, column=0, sticky="nsew")
 
-        # Navigation Controls
-        nav_controls = ttk.Frame(editor_frame)
-        nav_controls.grid(row=3, column=0, sticky="ew", pady=(10, 0))
-        self.prev_btn = ttk.Button(
-            nav_controls, text="Previous", command=self.prev_section, bootstyle="secondary"
-        )
-        self.prev_btn.pack(side="left")
-        self.dots_frame = ttk.Frame(nav_controls)
-        self.dots_frame.pack(side="left", expand=True)
-        self.next_btn = ttk.Button(
-            nav_controls, text="Next", command=self.next_section, bootstyle="secondary"
-        )
-        self.next_btn.pack(side="right")
-
-        self.update_dots()
+        # No previous/next navigation — user scrolls through all sections
         preview_frame = ttk.Frame(self.main_frame, padding=20)
         preview_frame.grid(row=0, column=1, sticky="nsew", padx=(10, 20), pady=20)
         preview_frame.grid_columnconfigure(0, weight=1)
@@ -174,66 +167,192 @@ class MainWindow(ttk.Window):
             preview_container, text="PDF Preview will appear here"
         )
         self.preview_label.pack(expand=True)
+        # Drag visual indicator state
+        self._drag_indicator = None
+        self._drag_state = {'name': None}
 
     def create_sections(self):
         data = self.model.get_data()
-        self.sections["name"] = NameSection(
-            self.scrolled_frame.container,
-            data.get("name"),
+        # If YAML contained an explicit order, respect it
+        saved_order = self.model.get_order()
+        if saved_order and isinstance(saved_order, list):
+            # use saved order
+            self.all_section_names = saved_order[:]
+        else:
+            self.all_section_names = self.section_names[:]
+
+        # Pass drag and move callbacks to SectionView-derived sections
+        cb_kwargs = dict(
+            drag_callback=self.handle_drag_event,
+            move_up_callback=self.move_section_up,
+            move_down_callback=self.move_section_down,
         )
-        self.sections["contact"] = ContactSection(
-            self.scrolled_frame.container,
-            data.get("contact"),
-        )
-        self.sections["summary"] = SummarySection(
-            self.scrolled_frame.container,
-            data.get("summary"),
-        )
-        self.sections["education"] = EducationSection(
-            self.scrolled_frame.container,
-            data.get("education"),
-        )
-        self.sections["skills"] = SkillsSection(
-            self.scrolled_frame.container,
-            data.get("skills"),
-        )
-        self.sections["interests"] = InterestsSection(
-            self.scrolled_frame.container,
-            data.get("interests"),
-        )
-        # Add more sections as needed
+
+        # Factory mapping
+        factory = {
+            'name': lambda d: NameSection(self.scrolled_frame, d, **cb_kwargs),
+            'contact': lambda d: ContactSection(self.scrolled_frame, d, **cb_kwargs),
+            'summary': lambda d: SummarySection(self.scrolled_frame, d, **cb_kwargs),
+            'experience': lambda d: ExperienceSection(self.scrolled_frame, d, **cb_kwargs),
+            'education': lambda d: EducationSection(self.scrolled_frame, d, **cb_kwargs),
+            'skills': lambda d: SkillsSection(self.scrolled_frame, d, **cb_kwargs),
+            'interests': lambda d: InterestsSection(self.scrolled_frame, d, **cb_kwargs),
+        }
+
+        # Instantiate sections in the chosen order
+        for name in self.all_section_names:
+            section_data = data.get(name) if isinstance(data, dict) else None
+            if name in factory:
+                self.sections[name] = factory[name](section_data)
+            else:
+                # unknown/dynamic sections use ItemSection with default fields
+                self.sections[name] = ItemSection(self.scrolled_frame, name, ["title", "description"], section_data, **cb_kwargs)
+
+    # Drag/reorder support -------------------------------------------------
+    def handle_drag_event(self, action, section_name, event):
+        """Live drag preview and reorder.
+        action: 'start', 'motion', 'end'
+        """
+        container = self.scrolled_frame.container
+        if action == 'start':
+            # remember which section is being dragged
+            self._drag_state['name'] = section_name
+            # ensure indicator exists
+            if self._drag_indicator is None:
+                self._drag_indicator = ttk.Frame(container, height=4)
+            # raise drag indicator and hide the dragged widget temporarily
+            dragged = self.sections.get(section_name).frame
+            dragged.lift()
+            # Create a lightweight ghost window showing the section title
+            try:
+                self._ghost = tk.Toplevel(self)
+                self._ghost.overrideredirect(True)
+                lbl = ttk.Label(self._ghost, text=section_name.replace('_', ' ').title(), bootstyle='secondary')
+                lbl.pack()
+                self._ghost.attributes('-alpha', 0.85)
+            except Exception:
+                self._ghost = None
+        elif action == 'motion':
+            if not self._drag_state.get('name'):
+                return
+            y = event.y_root - container.winfo_rooty()
+            # find insertion index by midpoint
+            insert_index = 0
+            for i, name in enumerate(self.all_section_names):
+                if name not in self.sections:
+                    continue
+                w = self.sections[name].frame
+                top = w.winfo_y()
+                height = w.winfo_height()
+                if y > top + height / 2:
+                    insert_index = i + 1
+            # determine target widget at insertion index
+            target_widget = None
+            for name in self.all_section_names[insert_index:]:
+                if name in self.sections and name != self._drag_state['name']:
+                    target_widget = self.sections[name].frame
+                    break
+            # place indicator
+            self._drag_indicator.place_forget()
+            if target_widget:
+                self._drag_indicator.place(in_=container, x=0, y=target_widget.winfo_y(), relwidth=1)
+            else:
+                # end of list
+                self._drag_indicator.place(in_=container, x=0, y=container.winfo_height(), relwidth=1)
+            # move ghost with cursor
+            try:
+                if getattr(self, '_ghost', None):
+                    gx = event.x_root + 10
+                    gy = event.y_root + 10
+                    self._ghost.geometry(f'+{gx}+{gy}')
+            except Exception:
+                pass
+        elif action == 'end':
+            if not self._drag_state.get('name'):
+                return
+            y = event.y_root - container.winfo_rooty()
+            insert_index = 0
+            for i, name in enumerate(self.all_section_names):
+                if name not in self.sections:
+                    continue
+                w = self.sections[name].frame
+                top = w.winfo_y()
+                height = w.winfo_height()
+                if y > top + height / 2:
+                    insert_index = i + 1
+            # clear indicator and reorder
+            self._drag_indicator.place_forget()
+            self.reorder_section(self._drag_state['name'], insert_index)
+            # destroy ghost
+            try:
+                if getattr(self, '_ghost', None):
+                    self._ghost.destroy()
+            except Exception:
+                pass
+            self._drag_state['name'] = None
+
+    def reorder_section(self, section_name, new_index):
+        if section_name not in self.all_section_names:
+            return
+        old_index = self.all_section_names.index(section_name)
+        if old_index == new_index:
+            return
+        # remove and insert
+        self.all_section_names.pop(old_index)
+        self.all_section_names.insert(new_index, section_name)
+        # refresh UI order in scrolled_frame.container
+        # pack_forget all then repack in new order
+        for name in self.all_section_names:
+            if name in self.sections:
+                self.sections[name].frame.pack_forget()
+        for name in self.all_section_names:
+            if name in self.sections:
+                self.sections[name].frame.pack(fill="x", pady=10, padx=5)
+        # autosave the order to resume.yaml
+        try:
+            self._autosave_order()
+        except Exception:
+            pass
+
+    def _autosave_order(self):
+        # collect visible section data
+        data = {}
+        for section_name, section in self.sections.items():
+            # Always include section data in the saved YAML regardless of UI mute state
+            data[section_name] = section.get_data()
+        ordered_data = {k: data.get(k) for k in self.all_section_names if k in data}
+        for k, v in data.items():
+            if k not in ordered_data:
+                ordered_data[k] = v
+        yaml_payload = {"_order": self.all_section_names, **ordered_data}
+        # write YAML without triggering compile
+        self.model.save(yaml_payload)
+
+    def move_section_up(self, section_name):
+        if section_name in self.all_section_names:
+            idx = self.all_section_names.index(section_name)
+            if idx > 0:
+                self.reorder_section(section_name, idx - 1)
+
+    def move_section_down(self, section_name):
+        if section_name in self.all_section_names:
+            idx = self.all_section_names.index(section_name)
+            if idx < len(self.all_section_names) - 1:
+                self.reorder_section(section_name, idx + 1)
 
     def show_current_section(self):
+        # Ensure all sections are shown in the editor; visibility toggles only mute inputs
         for name in self.all_section_names:
             if name in self.sections:
                 section = self.sections[name]
-                if name == self.all_section_names[self.current_section] and section.visible:
-                    section.frame.pack(fill="x", pady=10, padx=5)
-                else:
-                    section.frame.pack_forget()
+                section.frame.pack(fill="x", pady=10, padx=5)
+                try:
+                    # apply muted/enabled appearance per section
+                    section.set_enabled(section.visible)
+                except Exception:
+                    pass
 
-    def prev_section(self):
-        if self.current_section > 0:
-            self.current_section -= 1
-            self.show_current_section()
-            self.update_dots()
-
-    def next_section(self):
-        if self.current_section < len(self.all_section_names) - 1:
-            self.current_section += 1
-            self.show_current_section()
-            self.update_dots()
-
-    def update_dots(self):
-        for widget in self.dots_frame.winfo_children():
-            widget.destroy()
-        for i, name in enumerate(self.all_section_names):
-            dot = ttk.Label(
-                self.dots_frame,
-                text=str(i + 1),
-                bootstyle="primary" if i == self.current_section else "secondary",
-            )
-            dot.pack(side="left", padx=5)
+    # removed prev/next/dots navigation — scrolling replaces it
 
     def load_yaml(self):
         self.model.load()
@@ -245,11 +364,19 @@ class MainWindow(ttk.Window):
         """Save the data and compile the PDF."""
         data = {}
         for section_name, section in self.sections.items():
-            if section.visible:
-                data[section_name] = section.get_data()
-        self.controller.save_and_compile(
-            data, self.cls_menu.get(), self.update_pdf_preview
-        )
+            # visibility is a UI-only state and does not affect what is written to YAML
+            data[section_name] = section.get_data()
+        # Preserve order in the YAML by storing an explicit order list
+        ordered_data = {k: data.get(k) for k in self.all_section_names if k in data}
+        # also include any additional entries that were not UI sections
+        for k, v in data.items():
+            if k not in ordered_data:
+                ordered_data[k] = v
+
+        # attach a special key for order so loader can respect it (non-destructive)
+        yaml_payload = {"_order": self.all_section_names, **ordered_data}
+        # save via controller (which writes yaml and compiles)
+        self.controller.save_and_compile(yaml_payload, self.cls_menu.get(), self.update_pdf_preview)
 
     def update_pdf_preview(self):
         if convert_from_path is None or ImageTk is None:
@@ -283,10 +410,17 @@ class MainWindow(ttk.Window):
         """Add a new custom section."""
         name = simpledialog.askstring("New Section", "Enter section name:", parent=self)
         if name and name not in self.sections:
+            cb_kwargs = dict(
+                drag_callback=self.handle_drag_event,
+                move_up_callback=self.move_section_up,
+                move_down_callback=self.move_section_down,
+            )
             self.sections[name] = ItemSection(
-                self.scrolled_frame.container,
+                self.scrolled_frame,
                 name,
                 ["title", "description"],
+                None,
+                **cb_kwargs,
             )
             self.dynamic_sections.append(name)
             self.all_section_names.append(name)

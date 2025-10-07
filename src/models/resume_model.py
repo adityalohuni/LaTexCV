@@ -20,7 +20,17 @@ class ResumeModel:
             yaml.dump(self.data, f)
 
     def get_data(self):
+        # return a copy without internal _order key for UI convenience
+        if isinstance(self.data, dict) and '_order' in self.data:
+            d = dict(self.data)
+            d.pop('_order', None)
+            return d
         return self.data
+
+    def get_order(self):
+        if isinstance(self.data, dict):
+            return self.data.get('_order')
+        return None
 
     def set_data(self, data):
         self.data = data

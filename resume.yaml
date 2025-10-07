@@ -1,3 +1,11 @@
+_order:
+- name
+- contact
+- summary
+- experience
+- education
+- skills
+- interests
 contact:
   email: john.doe@example.com
   github: https://github.com/johndoe
@@ -16,6 +24,14 @@ education:
   institution: Another University
   left: true
   location: City, Country
+experience:
+- company: Google
+  dates: Jan, 2025 - Feb, 2026
+  description: 'Worked as a junior SDE
+
+    It was fun!'
+  location: Palo Alto
+  title: SDE
 interests:
 - left: true
 - AI Research
@@ -23,6 +39,7 @@ interests:
 - Autonomous Systems
 - Trail Hiking
 - Open Source
+- Soccer
 name:
   first: John
   last: Doe
@@ -41,7 +58,8 @@ skills:
     \ System Design"
   left: true
   title: Core Competencies
-- description: Running Jumping
+- Starva: https://www.strava.com/athletes/3432234
+  description: Running Jumping
   left: true
   title: Sports
 summary:

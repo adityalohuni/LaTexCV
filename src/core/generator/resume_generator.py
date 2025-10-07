@@ -198,11 +198,35 @@ class ResumeGenerator:
     def generate(self, tex_path: str = 'resume.tex'):
         """Orchestrates the resume generation process."""
         self._add_header()
-        
         left_sections, right_sections = [], []
-        reserved_keys = ['name', 'contact', 'cls']
-        for section_name, items in self.data.items():
-            if section_name in reserved_keys or not isinstance(items, list) or not items:
+        # treat internal keys as reserved
+        reserved_keys = ['name', 'contact', 'cls', '_order']
+
+        # If an explicit order is provided in the YAML, use it as the canonical ordering
+        section_names_to_process = []
+        if isinstance(self.data, dict) and isinstance(self.data.get('_order'), list):
+            for name in self.data.get('_order'):
+                if name in reserved_keys:
+                    continue
+                # only include if the section exists in data
+                if name in self.data:
+                    section_names_to_process.append(name)
+            # append any remaining non-reserved sections not mentioned in _order
+            for name in self.data:
+                if name in reserved_keys or name in section_names_to_process:
+                    continue
+                section_names_to_process.append(name)
+        else:
+            # fallback to the YAML mapping order
+            for name in self.data:
+                if name in reserved_keys:
+                    continue
+                section_names_to_process.append(name)
+
+        # Now split into left/right based on 'left' flag in first item
+        for section_name in section_names_to_process:
+            items = self.data.get(section_name)
+            if not isinstance(items, list) or not items:
                 continue
             # Default to right column unless 'left: true' is specified in the first item
             if isinstance(items[0], dict) and items[0].get('left', False):
